@@ -2,7 +2,7 @@
 
 <!-- Based on eclipse generated build.xml -->
 
-<project basedir="." default="build" name="CDMS">
+<project basedir="." default="build" name="CaMML">
 
     <path id="project.classpath">
         <pathelement location="Camml"/>
@@ -10,7 +10,7 @@
         <pathelement location="jar/junit.jar"/>
         <pathelement location="jar/NeticaJ.jar"/>
         <pathelement location="jar/weka.jar"/>
-		<pathelement location="jar/tetrad4.jar"/>
+	<pathelement location="jar/tetrad4.jar"/>
     </path>
 
     <target name="init">
