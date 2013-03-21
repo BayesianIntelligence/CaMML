@@ -105,7 +105,9 @@
 	    <jar destfile="camml.jar"
 		     basedir="Camml" 
 			 manifest="Camml/Manifest.txt"
-			 excludes="**/*.java"/>
+			 excludes="**/*.java">
+	    	<zipfileset dir="." includes="jar/cdms.jar" fullpath="lib/cdms.jar" /> 
+		</jar>
 	</target>
 
 </project>

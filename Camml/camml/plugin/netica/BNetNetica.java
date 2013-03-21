@@ -716,7 +716,7 @@ public class BNetNetica extends BNet
 
     /** Convenience function for exactKLNetica(m[],y[],trueModel) */
     public static double[] exactKLNetica( BNet m, Value.Vector[] y, int trueModel) 
-        throws NeticaException {
+        throws Exception {
         BNetNetica nets[] = new BNetNetica[y.length];
         for (int i = 0;i < nets.length; i++) { nets[i] = new BNetNetica(m.getDataType());}
         return exactKLNetica( nets, y, trueModel );

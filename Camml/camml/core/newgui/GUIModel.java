@@ -321,6 +321,14 @@ public class GUIModel implements GUIParameters {
 		metropolisSearch.caseInfo.searchFactor = searchFactor;				//No separate value kept in MetropolisSearch
 		metropolisSearch.caseInfo.maxNumSECs = maxSECs;						//No separate value kept in MetropolisSearch
 		metropolisSearch.caseInfo.minTotalPosterior = minTotalPosterior;	//No separate value kept in MetropolisSearch
+		try {
+			/// Test for Netica at run time
+			Class.forName("norsys.netica.Environ");
+			metropolisSearch.caseInfo.useNetica = true;
+		}
+		catch (ClassNotFoundException e) {
+			metropolisSearch.caseInfo.useNetica = false;
+		}
 		
 		
 		//Display whether using set RNG seed or random, plus what the seed is:

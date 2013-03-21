@@ -1,0 +1,37 @@
+set {
+	//Can specify number of variables in data set: i.e. 'n=10;'
+	//May specify tier prior (defaults to 1.0): i.e. 'tierPrior = 0.9;'
+	//May specify edit distance (ed) prior (defaults to ~0.73)
+	//May specify KT prior (defaults to ~0.73)
+}
+ed {
+	//Prior in format of edit distance from specified network or part
+	// network. Prior based on edit distance from this network.
+	//Note: This section optional. Can be removed if not used.
+	// Example: To specify a diamond network we could use
+	// 'a -> b; a -> c; b -> d; c -> d;' or 'a -> b c; d <- b c;'
+}
+
+//Use kt { ... ) for Kendall Tau (KT) prior.
+//KT prior - effectively 'bubble sort distance' between two total orderings.
+//Minimal KT distance added to undirected edit distance to determine prior for
+//a given structure.
+
+tier {
+	//Tiers allow a total ordering of variables to be specified.
+	//Format: 'A B C < D E F < G H I;' means variables A,B,C are before
+	// D,E,F in the total ordering of variables, (i.e. A can be a parent
+	// of D, but D cannot be a parent of A) and so on.
+	
+	VisitAsia Smoking < TB Cancer < TBorCancer < XRay Bronchitis Dysphenia;
+}
+arcs {
+	//Allows individual arc relationships to be specified.
+	//Available arc types. Note: specified in format 'A -> B 0.7;'
+	// where the number is the probability of that arc existing.
+	//Directed arc: i.e. A -> B or B <- A
+	//Undirected arc: i.e. A -- B
+	//Ancestor: A => B or B <= A
+	//Correlated: A == B
+	//Tier: A << B or B >> A
+}

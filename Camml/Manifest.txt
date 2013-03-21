@@ -1,3 +1,8 @@
-Main-Class: camml.core.Main
+Main-Class: camml.core.newgui.RunCmd
 Class-Path: cdms.jar weka.jar NeticaJ.jar tetrad4.jar
-
+Bundle-SymbolicName: camml
+Bundle-Version: 1.0.0
+Bundle-Vendor: Bayesian Intelligence
+Bundle-ClassPath: .,/lib/cdms.jar
+Export-Package: camml.core.newgui
+DynamicImport-Package: *
