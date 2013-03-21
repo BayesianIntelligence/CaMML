@@ -22,6 +22,8 @@ import camml.plugin.weka.Converter;
 import cdms.core.Type;
 import cdms.core.Value;
 
+import camml.core.io.CSV;
+
 /**Code for actually running a search, exporting results etc. 
  * Designed to work closely with the cammLGUI class: i.e. a GUIModel object
  *  is passed to the cammlGUI constructor.<br>
@@ -181,6 +183,12 @@ public class GUIModel implements GUIParameters {
 				data = null;
 				throw new Exception( "Error loading file: " + e );
 			}
+			return;
+		}
+		
+		if ( path.endsWith("csv") ){
+			data = CSV.load(path);
+			
 			return;
 		}
 		

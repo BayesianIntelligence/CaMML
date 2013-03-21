@@ -632,7 +632,8 @@ public class CaMMLGUI extends javax.swing.JFrame {
 
         jMenuBar1.add(helpMenu);
 
-        setJMenuBar(jMenuBar1);
+        /// No menu bar, thanks! At least for now...
+        //setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -670,9 +671,11 @@ public class CaMMLGUI extends javax.swing.JFrame {
         
         //Set uf the file dialogue boxes:
         dataFileChooser = new JFileChooser();
-        dataFileChooser.setFileFilter(  new FileNameExtensionFilter("Old CaMML Format (.cas)", "cas") );
-        dataFileChooser.addChoosableFileFilter( new FileNameExtensionFilter("Friedman Data Files (.data)","data") );	//TODO: Currently untested!
+        dataFileChooser.setFileFilter(  new FileNameExtensionFilter("All Supported Files (.cas;.csv;.arff;.data)", "cas", "csv", "arff", "data") );
+        dataFileChooser.addChoosableFileFilter(  new FileNameExtensionFilter("Old CaMML Format (.cas)", "cas") );
+        dataFileChooser.addChoosableFileFilter( new FileNameExtensionFilter("Comma Separated Values (.csv)", "csv") );
         dataFileChooser.addChoosableFileFilter( new FileNameExtensionFilter("Weka Data Files (.arff)","arff") );
+        dataFileChooser.addChoosableFileFilter( new FileNameExtensionFilter("Friedman Data Files (.data)","data") );	//TODO: Currently untested!
         
         outputBNetChooser = new JFileChooser();
         outputBNetChooser.setFileFilter( new FileNameExtensionFilter("Netica BN (.dne)","dne"));

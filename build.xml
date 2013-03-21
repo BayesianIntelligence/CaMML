@@ -8,7 +8,7 @@
         <pathelement location="Camml"/>
         <pathelement location="jar/cdms.jar"/>
         <pathelement location="jar/junit.jar"/>
-        <pathelement location="jar/NeticaJ.jar"/>
+        <pathelement location="jar/NeticaJ-Win/NeticaJ.jar"/>
         <pathelement location="jar/weka.jar"/>
 	<pathelement location="jar/tetrad4.jar"/>
     </path>
