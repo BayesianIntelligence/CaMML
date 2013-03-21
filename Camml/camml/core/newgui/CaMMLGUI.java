@@ -146,7 +146,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("CaMML");
+        setTitle(GUIParameters.programName);
         setMinimumSize(new java.awt.Dimension(640, 320));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -248,7 +248,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
         setupLabelAdvancedSettings.setText("Advanced Settings");
 
         setupLabelLearnDBN.setText("Learn Dynamic Bayesian Network (DBN)");
-        setupLabelLearnDBN.setToolTipText("<html>CaMML can learn two types of Bayesian Networks:<br>\n- A standard Bayesian Network, or<br>\n- A Dynamic Bayesian Network (DBN)<br>\nIf checked, CaMML will assume the selected data file represents a time series,<br>\nand will attempt to learn a DBN from this time series.</html>");
+        setupLabelLearnDBN.setToolTipText("<html>"+GUIParameters.programName+" can learn two types of Bayesian Networks:<br>\n- A standard Bayesian Network, or<br>\n- A Dynamic Bayesian Network (DBN)<br>\nIf checked, "+GUIParameters.programName+" will assume the selected data file represents a time series,<br>\nand will attempt to learn a DBN from this time series.</html>");
 
         setupLearnDBNCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -595,7 +595,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
 
         statusBarLabelData.setText("Data: Not Loaded");
 
-        versionLabel.setText("CaMML (C) - Ver. 0.00");
+        versionLabel.setText("______ (C) - Ver. 0.00");
 
         statusBarLabelExpertPriors.setText("Expert Priors: Not Set");
 
@@ -667,7 +667,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
         //------------ End NetBeans Generated Code ------------
         //***************************************************
         
-        versionLabel.setText("CaMML (C) - Ver. " + GUIParameters.versionNumber );
+        versionLabel.setText(GUIParameters.programName + " Version " + GUIParameters.versionNumber );
         
         //Set uf the file dialogue boxes:
         dataFileChooser = new JFileChooser();
@@ -704,7 +704,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     }
     
     private void confirmBeforeExit(){
-    	int result = JOptionPane.showConfirmDialog(mainTabbedPane, "Are you sure you want to exit? Any unsaved data will be lost.", "Exit CaMML?", JOptionPane.OK_CANCEL_OPTION);
+    	int result = JOptionPane.showConfirmDialog(mainTabbedPane, "Are you sure you want to exit? Any unsaved data will be lost.", "Exit "+GUIParameters.programName+"?", JOptionPane.OK_CANCEL_OPTION);
     	if( result == JOptionPane.OK_OPTION ) System.exit(0);
     }
    

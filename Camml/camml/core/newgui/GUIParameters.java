@@ -18,7 +18,8 @@ import camml.core.search.SearchPackage;
 public interface GUIParameters {
 	
 	//TODO: Version number 
-	public String versionNumber = "1.00";
+	public String programName = "BI-CaMML";
+	public String versionNumber = "1.1";
 	
 	//Formatting options for results table
 	public static final DecimalFormat formatPosterior = new DecimalFormat("0.00000");		//Posteriors to 5 DP
