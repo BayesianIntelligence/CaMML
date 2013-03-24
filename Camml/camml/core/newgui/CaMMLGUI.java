@@ -20,6 +20,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import camml.core.searchDBN.MetropolisSearchDBN;
+import cdms.core.Cdms;
+import cdms.core.Type;
+
 
 /**Main class for GUI.
  * Most GUI-related code is in this class.<br>
@@ -134,6 +138,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
         resultsExportSelectedBN = new javax.swing.JButton();
         resultsExportAllNetworks = new javax.swing.JButton();
         resultsViewSelectedNetworkBtn = new javax.swing.JButton();
+        resultsArcProbBtn = new javax.swing.JButton();
         statusBarLabelData = new javax.swing.JLabel();
         versionLabel = new javax.swing.JLabel();
         statusBarLabelExpertPriors = new javax.swing.JLabel();
@@ -556,6 +561,13 @@ public class CaMMLGUI extends javax.swing.JFrame {
             }
         });
 
+        resultsArcProbBtn.setText("Arc Probabilities");
+        resultsArcProbBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resultsArcProbBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout resultsPanelLayout = new javax.swing.GroupLayout(resultsPanel);
         resultsPanel.setLayout(resultsPanelLayout);
         resultsPanelLayout.setHorizontalGroup(
@@ -565,10 +577,12 @@ public class CaMMLGUI extends javax.swing.JFrame {
                 .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(resultsScrollPane)
                     .addGroup(resultsPanelLayout.createSequentialGroup()
+                        .addComponent(resultsArcProbBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                         .addComponent(resultsViewSelectedNetworkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(resultsExportSelectedBN, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 215, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(resultsExportAllNetworks))
                     .addGroup(resultsPanelLayout.createSequentialGroup()
                         .addComponent(resultsLabelFullResults)
@@ -586,7 +600,8 @@ public class CaMMLGUI extends javax.swing.JFrame {
                 .addGroup(resultsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resultsExportAllNetworks)
                     .addComponent(resultsViewSelectedNetworkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resultsExportSelectedBN)))
+                    .addComponent(resultsExportSelectedBN)
+                    .addComponent(resultsArcProbBtn)))
         );
 
         resultsScrollPane.getAccessibleContext().setAccessibleName("Results");
@@ -1199,6 +1214,46 @@ public class CaMMLGUI extends javax.swing.JFrame {
         	JOptionPane.showMessageDialog( mainTabbedPane, e );
         }
     }
+    
+    
+    /** User clicks the "Arc Probabilities" button on the results tab */
+    private void resultsArcProbBtnActionPerformed(java.awt.event.ActionEvent evt) {
+        
+    	//Determine if search run yet
+    	if( guimodel.metropolisSearch == null || !guimodel.metropolisSearch.isFinished() ){
+    		JOptionPane.showMessageDialog( mainTabbedPane, "Cannot view arc probabilities: Search not complete.");
+    		return;
+    	}
+    	
+    	if( guimodel.metropolisSearch instanceof MetropolisSearchDBN ){
+    		JOptionPane.showMessageDialog( mainTabbedPane, "Cannot view arc probabilities: Not yet implemented for DBNs.");
+    		return;
+    	}
+    	
+    	
+    	//Search is complete. Now, display the arc probabilities:
+    	double[][] arcProbs = guimodel.metropolisSearch.getArcPortions();
+    	
+    	int numNodes = arcProbs[0].length;
+    	String[] name = new String[numNodes];
+    	
+    	cdms.core.Type.Structured dataType = (cdms.core.Type.Structured)((cdms.core.Type.Vector)guimodel.metropolisSearch.caseInfo.data.t).elt;
+        for ( int i = 0; i < name.length; i++ ) {
+            if ( dataType.labels != null ) {
+                name[i] = dataType.labels[i];
+            }
+            else {
+                name[i] = "var(" + i + ")";
+            }
+        }
+
+    	JFrame frame = new ArcProbViewer( arcProbs, name );
+		
+		frame.setSize( GUIParameters.ArcProbViewerWindowSize[0], GUIParameters.ArcProbViewerWindowSize[1] );
+		frame.setTitle( "Arc Probabilities: P( A -> B ) at row A, column B" );
+		frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
+		frame.setVisible(true);
+    }
 
     
     
@@ -1390,7 +1445,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     private void createDataViewer(){
     	if( guimodel.dataValid() ){
 			JFrame frame = new DataViewer(guimodel.data);
-			frame.setSize(800,600);
+			frame.setSize( GUIParameters.DataViewerWindowSize[0], GUIParameters.DataViewerWindowSize[1] );
 			frame.setTitle( "Data Viewer - " + guimodel.selectedFile.getName() );
 			frame.setDefaultCloseOperation( JFrame.DISPOSE_ON_CLOSE );
 			frame.setVisible(true);
@@ -1454,6 +1509,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     private javax.swing.JTextField minTotalPosteriorTextField;
     private javax.swing.JButton newExpertPriorsBtn;
     private javax.swing.JPanel priorsPanel;
+    private javax.swing.JButton resultsArcProbBtn;
     private javax.swing.JButton resultsExportAllNetworks;
     private javax.swing.JButton resultsExportSelectedBN;
     private javax.swing.JLabel resultsLabelFullResults;

@@ -26,7 +26,11 @@ public interface GUIParameters {
 	public static final DecimalFormat formatBestMML = new DecimalFormat("0.000");			//3 DP
 	public static final DecimalFormat formatWeight = new DecimalFormat("0.000");			//3 DP
 	
-	//Minumum and maximum allowable values for search factor, maxSECs and minTotalPosterior.
+	//Formatting options for ArcProbViewer table:
+	public static final DecimalFormat formatArcProbDecimal = new DecimalFormat("0.00000");
+	public static final DecimalFormat formatArcProbSci = new DecimalFormat("0.0000E0");
+	
+	//Minimum and maximum allowable values for search factor, maxSECs and minTotalPosterior.
 	public static final double minSearchFactor = 0.05;			//Minimum search factor value allowable
 	public static final double maxSearchFactor = 50.0;			//Maximum search factor value allowable
 	
@@ -35,6 +39,11 @@ public interface GUIParameters {
 	
 	public static final double min_minTotalPosterior = 0.30;		//Minumum value for "minTotalPosterior" that is considered valid
 	public static final double max_minTotalPosterior = 1.00;		//Maximum value for "minTotalPosterior" that is considered valid
+	
+	//Default window sizes:
+	public static final int[] DataViewerWindowSize = new int[]{800,600};	//Window size for data viewer
+	public static final int[] ArcProbViewerWindowSize = new int[]{640,480};	//Window size for arc probability viewer
+	
 	
 
 	//Available search types: These options will be presented to user in combobox.
