@@ -72,6 +72,7 @@ public class CSV {
 		
 		for (int c=0; c<headers.length; c++) {
 			/// Assume discrete
+			/* SM: This doesn't work the way I want/thought.
 			if (types[c].equals("int")) {
 				int minVal = Integer.MAX_VALUE;
 				int maxVal = Integer.MIN_VALUE;
@@ -83,15 +84,19 @@ public class CSV {
 					if (val < minVal)  minVal = val;
 					if (val > maxVal)  maxVal = val;
 				}
+				System.out.println(c+":"+minVal+":"+maxVal);
+				for (int r=0;r<intArray.length;r++) System.out.print(intArray[r]+",");
+				System.out.println();
 				/// Avoid creating overly large discrete nodes (either switch to continuous or nominal)
-				if (maxVal-minVal > CSV.MAX_DISCRETE_STATES) {
+				/// FIX: (SM) Discrete doesn't work unless it starts from 0...
+				if (maxVal-minVal > 30) {
 					types[c] = "double";
 				}
 				else {
 		            Type.Discrete discType = new Type.Discrete(minVal,maxVal,false,false,false,false);
 	                vecArray[c] = new VectorFN.FastDiscreteVector( intArray, discType );
 				}
-			}
+			}*/
 			/// Assume continuous
 			if (types[c].equals("double")) {
 				/// If there's only a "small" number of values, treat as nominal
@@ -110,7 +115,7 @@ public class CSV {
 				}
 			}
 			/// Assume nominal
-			if (types[c].equals("string")) {
+			if (types[c].equals("string") || types[c].equals("int")) {
 				Set<String> keysPre = columnValues[c].keySet();
 				String[] keys = new String[keysPre.size()];
 				keysPre.toArray(keys);
