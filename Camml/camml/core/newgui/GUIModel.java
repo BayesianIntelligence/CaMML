@@ -76,7 +76,7 @@ public class GUIModel implements GUIParameters {
 	 * @param index Index of network in full results array. NOTE: index appended to filename automatically.
 	 * @throws Exception IO errors, invalid index etc
 	 */
-	public void exportFullResultsBN( String filepath, int index ) throws Exception {		
+	public void exportFullResultsBN( String filepath, int index, boolean withIndex ) throws Exception {		
 		if( metropolisSearch == null || !metropolisSearch.isFinished() ) throw new Exception("Cannot produce network if search has not been run.");
 		if( searchResults == null && searchResultsDBN == null ) throw new Exception("Search results: Not generated.");
 		if( index < 0 ) throw new Exception("Invalid Index.");
@@ -91,7 +91,7 @@ public class GUIModel implements GUIParameters {
 			path = filepath;
 		}
 		
-		path = path + index + ".dne";	//Concatenate number at end
+		path = path + (withIndex ? ""+index : "") + ".dne";	//Concatenate number at end
 		
 		if( searchResults != null ){	//Export standard BN
 			Value.Structured repNetwork = (Value.Structured)MMLEC.getRepresentative.apply( searchResults.elt(index) );
@@ -114,6 +114,10 @@ public class GUIModel implements GUIParameters {
 			ExportDBNNetica.export( path, repNetwork, "_0", "_1" );
 		}
 		
+	}
+	
+	public void exportFullResultsBN( String filepath, int index ) {
+		exportFullResultsBN(filepath, index);
 	}
 	
 	/**Exports ALL networks (Netica format) from the set of 'representative networks'

@@ -5,6 +5,7 @@ import java.util.*;
 import com.beust.jcommander.*;
 import java.io.*;
 
+/** Add extra information when usage printed, such as accepted formats for input <data-file>s.**/
 class CmdOptions {
 	@Parameter(description = "<data-file> [<output-file>]")
 	public List<String> files = new ArrayList<String>();
@@ -135,7 +136,14 @@ public class RunCmd {
 	    	if( !model.minTotalPosteriorValid() )  throw new Exception("Invalid minimum total posterior");
 	    	
 	    	//Check expert priors value:
-	    	if( !model.expertPriorsValid() )  throw new Exception("Invalid expert priors");
+	    	if( !model.expertPriorsValid() ) {
+		    	try {
+		    		model.validateExpertPriors(model.expertPriorsString);
+		    	}
+		    	catch (Exception e) {
+		    		throw new Exception("Invalid expert priors: "+e);
+		    	}
+	    	}
 	    	
 			model.runSearch(opts.dbn);
 			
@@ -147,7 +155,7 @@ public class RunCmd {
 				}
 				else {
 					System.out.println("\n\nSaving to '"+outFile+"'");
-					model.exportFullResultsBN(outFile, 0);
+					model.exportFullResultsBN(outFile, 0, false);
 				}
 			}
 			else {
