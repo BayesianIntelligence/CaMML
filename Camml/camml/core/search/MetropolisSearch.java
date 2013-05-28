@@ -45,8 +45,6 @@ import camml.core.models.mixture.Mixture;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
-import norsys.netica.NeticaException;
-
 import camml.core.models.ModelLearner;
 import camml.core.library.WallaceRandom;
 import camml.plugin.augment.AugmentFN3;
@@ -690,7 +688,7 @@ public class MetropolisSearch extends BNetSearch
                     try {
                         System.out.print('X');
                         klArray[i] = BNetNetica.exactKLNetica(bNet,params,i);
-                    } catch ( NeticaException e) {
+                    } catch ( Exception e) {
                         throw new RuntimeException(e);
                     }
                 }                

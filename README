@@ -1,140 +1,45 @@
-
 Quick guide to getting CaMML started (updated 17-02-2013) :
 
 for the latest src see:
-    https://github.com/rodneyodonnell/CaMML
+    https://github.com/AlexDBlack/CaMML
 for docs & discussion see:
     http://groups.google.com/group/camml/
+    
+================
+== Installing ==
+================
+
+To install camml, simply extract the BI-CaMML.zip file to a folder of your choice.
+
+You will need to make sure you have at least Java 6, and that the "java" program is in your system's PATH variable. (Java will normally do this for you automatically.)
 
 ==============================
-== Installing/Running CaMML ==
+== Running CaMML with a GUI ==
 ==============================
-1. Checkout from Github
-> git clone git://github.com/rodneyodonnell/CaMML.git
 
-2. Get library/jar files
-- For CaMML to compile cleanly, we need to download the Netica BNet inference library.
-  If running Linux, simply run get_libs.sh from the CAMML dir
-  Otherwise grab the libraries for you platform direct from http://norsys.com/downloads/
-  NOTE: If your platform is not supported (x86_64 linux not currently supported by netica) just grab
-        the .jar file anyway so things compile.  Netica inference is disabled by default.
+== CaMML GUI ==
 
-- CaMML includes .jars from several open source packages, to get the latest versions try:
-	Tetrad : http://www.phil.cmu.edu/projects/tetrad_download/download/
-	Weka : http://www.cs.waikato.ac.nz/ml/weka/
-	junit : http://www.junit.org/
-
-3. Compile/test CaMML
-> cd CaMML
-> ant
-> export LD_LIBRARY_PATH=`pwd`/lib      # Tell ant where to find the netica binaries
-> ant test
-
-# Note: A bunch of tests will fail if netica libs are not found.
-
-
-4. Run     
-> ./camml.sh
-
-=================
-== Using CaMML ==
-=================
-
-There are several plausible ways to use CaMML, common approaches include:
- - Using the CaMML GUI
- - Using the weka wrapper
- - Using the CDMS GUI
-   - Interacting Manually
-   - Writing CDMS .fp scripts
- - (advanced) Using a JVM based scripting language (e.g., jython)
-
-One or the other may be easiest depending on the task.
-The 'CaMML GUI' and 'weka wrapper' are probably the easiest places to start for
-most users.
-
-== CaMML GUI
 CaMML has a stand-alone Java-based GUI (added 02/2013) that should be suitable for
 most basic learning tasks. The GUI has a data viewer, basic network viewer (based
 on Netica libraries), and support for learning DBNs.
 
-- To run the GUI, use:
+- To run the GUI, go to the BI-CaMML directory and use:
   > camml_gui.sh
   > camml_gui.bat (Windows)
-
-Note that the -Djava.library.path field in the camml_gui.bat file may need to be
-edited if the Netica libraries are not in the /jar/ folder - the GUI will run, but
-viewing learned networks will be unavailable.
 
 At present, this GUI only supports data files that are discrete and contain no
 missing values.
 
-== Weka Wrapper
-CaMML can be used like a standard weka classifier from the command line.
+== CaMML command line (and Weka Wrapper) ==
+
+CaMML can be used from the command line, by default as a standard weka classifier.
 It can also be added to the weka GUI, but that's beyond the scope of this doc.
 
-- To get a list of options, use:
-  > ./camml_weka.sh
+- To get a list of options, go to the BI-CaMML directory and use:
+  > camml.sh
+  > camml.bat (Windows)
 
 - To train/test a model using weka's default x-fold validation, use:
-  > ./camml_weka.sh -t Camml/camml/test/iris.arff
+  > camml.sh -t Camml/camml/test/iris.arff
+  > camml.bat -t Camml/camml/test/iris.arff (Windows)
 
-
-== CDMS GUI
-Loading Data: 
-	Click File->Load Data from the main menu.
-	This is fairly straightforward.  Choose a filename and tell
-	CaMML the type of file you are loading.  If you don't tell
-	CaMML the file type it gets confused.
-	The most useful types are:
-	.cas : Same format as the C version of CaMML
-	.arff : Load a weka file
-	.arff (discretize) : As above, but converts file to a format
-	 the CaMML can work with (ie. all discrete, no missing).
-	Delimited Text : Try to automatically convert a plain text
-	 file into a dataset.
-	
-	A tabular view of the data should pop-up onto the screen.
-
-Running CaMML:
-	Right-clicking on the data allows us to run a function on it.
-	The most common option is to run 'camml' using all the default
-	options.  We generally get better results (though slowly) using
-	the 'cammlDualCTL' function which runs CaMML using hybrid models
-	of local structure.
-	
-	Right-click data.
-	Choose "Apply Function"
-	Choose "camml", hit ok
-	
-	The GUI becomes unresponsive while CaMML is running, but 
-	progress can be seen in the text window you launched CaMML
-	from.  When CaMML is done a results window appears.
-
-Results:
-	CaMML produced a heirachy of networks. The heirachy
-	is MMLECs -> SECs -> DAGs -> TOMs.	
-	The results window initially shows only the best MMLECs
-	along with their posterior and MML score.
-	To view a representative model of the MMLEC, right-click the [n SECs] item, 
-	 apply-function, ShowNet
-	To save a representative model of the MMLEC, right-click the [n SECs] item, 
-     apply-function, SaveNet
-	To go to the lower level of the heirachy, right-click the [n SECs] item, 
-	 and select "Extract". A table of all the SECs in the MMLEC will appear.
-	You can save, show or extract the DAGs from each SEC the same way you
-	 would for a MMLEC.
-
-
-== CDMS Envinronment
-	The CDMS Environment contains Values of various types. A complete
-	list (sorted by type) is available on the left side of the GUI.
-	To add something to the environment (eg. a dataset or learned model)
-	click on in, choose add/copy and name it.  It should appear under the
-	appropriate type.  If  you double click on its name it pops-up, and
-	you can also refer to it by name in scripts.
-
-== CDMS Scripting
-	The CDMS scripting language is based on functional programming and
-	is quite powerful, though underdocumented.
-	Sample scripts can be found in CAMML/Camml/scripts
-	NOTE: The "{" and "}" characters are used for comments.
