@@ -85,6 +85,10 @@ public class CaseInfo implements Serializable {
     
     /** arcWeights[i][j] = total weight of all unclean toms where j -> i exists. */
     public double[][] arcWeights; 
+    
+    /** arcWeightsDBN[i][j] = total weight of all unclean DTOMS where interslice arc j_0 -> i_1 exists.
+     * Only applicable for learning DBNs.  */
+    public double[][] arcWeightsDBN;
 
     /** Update arcPortion based on weight. */
     public boolean updateArcWeights = false;

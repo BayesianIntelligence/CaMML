@@ -20,9 +20,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import camml.core.search.MetropolisSearch;
 import camml.core.searchDBN.MetropolisSearchDBN;
-import cdms.core.Cdms;
-import cdms.core.Type;
 
 
 /**Main class for GUI.
@@ -1228,11 +1227,6 @@ public class CaMMLGUI extends javax.swing.JFrame {
     		return;
     	}
     	
-    	if( guimodel.metropolisSearch instanceof MetropolisSearchDBN ){
-    		JOptionPane.showMessageDialog( mainTabbedPane, "Cannot view arc probabilities: Not yet implemented for DBNs.");
-    		return;
-    	}
-    	
     	
     	//Search is complete. Now, display the arc probabilities:
     	double[][] arcProbs = guimodel.metropolisSearch.getArcPortions();
@@ -1240,6 +1234,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     	int numNodes = arcProbs[0].length;
     	String[] name = new String[numNodes];
     	
+    	//Get the names for the variables:
     	cdms.core.Type.Structured dataType = (cdms.core.Type.Structured)((cdms.core.Type.Vector)guimodel.metropolisSearch.caseInfo.data.t).elt;
         for ( int i = 0; i < name.length; i++ ) {
             if ( dataType.labels != null ) {
@@ -1249,8 +1244,14 @@ public class CaMMLGUI extends javax.swing.JFrame {
                 name[i] = "var(" + i + ")";
             }
         }
-
-    	JFrame frame = new ArcProbViewer( arcProbs, name );
+        
+    	JFrame frame;
+    	if( guimodel.metropolisSearch.getClass() == MetropolisSearch.class ){
+    		frame = new ArcProbViewer( arcProbs, name );
+    	} else {
+    		double[][] arcProbTemporal = ((MetropolisSearchDBN)guimodel.metropolisSearch).getArcPortionsDBN();
+    		frame = new ArcProbViewer( arcProbs, arcProbTemporal, name );
+    	}
 		
 		frame.setSize( GUIParameters.ArcProbViewerWindowSize[0], GUIParameters.ArcProbViewerWindowSize[1] );
 		frame.setTitle( "Arc Probabilities: P( A -> B ) at row A, column B" );

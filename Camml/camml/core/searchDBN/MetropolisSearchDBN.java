@@ -5,16 +5,13 @@ import java.util.Random;
 
 import camml.core.library.WallaceRandom;
 import camml.core.models.ModelLearner;
-import camml.core.search.DoubleSkeletalChange;
 import camml.core.search.MMLEC;
 import camml.core.search.MetropolisSearch;
-import camml.core.search.ParentSwapChange;
 import camml.core.search.SEC;
 import camml.core.search.SkeletalChange;
 import camml.core.search.TOM;
 import camml.core.search.TOMTransformation;
 import camml.core.search.TemporalChange;
-//import camml.core.search.MetropolisSearch.SECHashKey;
 import cdms.core.Value;
 import cdms.core.VectorFN;
 import cdms.core.Value.Model;
@@ -28,8 +25,8 @@ public class MetropolisSearchDBN extends MetropolisSearch {
 
 	/** Mutation operators for making temporal arc changes to DTOMs */
 	protected DBNTemporalArcChange dbnTemporalArcChange;
-	protected DBNDoubleTemporalArcChange dbnDoubleTemporalArcChange;
-	
+	protected DBNDoubleArcChange dbnDoubleArcChange;
+	protected DBNParentSwapChange dbnParentSwapChange;
 	
 	/** Prior on TEMPORAL arcs being present in DBN. */
 	protected double arcProbTemporal = 0.5;
@@ -47,6 +44,7 @@ public class MetropolisSearchDBN extends MetropolisSearch {
 		caseInfo.secHash = new DBNSECHash( rand, numNodes );
 		caseInfo.secHash.caseInfo = caseInfo;
 		caseInfo.tomHash.caseInfo = caseInfo;
+		caseInfo.arcWeightsDBN = new double[numNodes][numNodes];
 		
 		//Create new DBN Node Cache - to replace one set by BNetSearch constructor:
 		caseInfo.nodeCache = new DNodeCache( data, mmlModelLearner, mlModelLearner );
@@ -90,7 +88,6 @@ public class MetropolisSearchDBN extends MetropolisSearch {
             //AS.setOption("arcProb", ????? );
             //AS.recalculateCosts(); // update bestCost based on new arcProb.
         }
-        //AS.tomCoster = tomCoster;
         AS.setTOMCoster(tomCoster);
         
         // run the search.  A blocking search is used as we need the result before
@@ -107,6 +104,31 @@ public class MetropolisSearchDBN extends MetropolisSearch {
         bestCost = AS.getBestCost();
         caseInfo.referenceWeight = bestCost;
 	}
+	
+	/** Updates weights so that currentCost has a weight of 1.0.
+	 * See MetropolisSearch.updateReferenceWeight(...)
+	 */
+	public void updateReferenceWeight( double currentCost ){
+		//As per MetropolisSearch.updateReferenceWeight():
+		double oldReferenceWeight = caseInfo.referenceWeight;
+        caseInfo.referenceWeight = currentCost;
+        double multiplier = Math.exp( (currentCost - oldReferenceWeight) * (1.0 - (1.0/temperature)));
+		
+		
+		super.updateReferenceWeight( currentCost );
+		
+		//Update arc portions for temporal arcs
+		if( caseInfo.updateArcWeights ){
+			double[][] arcWeightsDBN = caseInfo.arcWeightsDBN;
+			int N = arcWeightsDBN.length;
+			for( int i=0; i<N; i++ ){
+				for( int j=0; j<N; j++ ){
+					arcWeightsDBN[i][j] *= multiplier;
+				}
+			}
+		}
+	}
+	
 
 	/**Stochastically attempt a transformation to the current DTOM.
 	 * Returns true if DTOM changed.
@@ -128,21 +150,20 @@ public class MetropolisSearchDBN extends MetropolisSearch {
 		TOMTransformation transform;
 		
         // Randomly choose class of transformation to attempt.
+		
         double rnd = rand.nextDouble();
-        if (rnd < 0.07143) {         // 1/14 chance
-            transform = parentSwapChange;
-        } else if (rnd < 0.14286) {  // 1/14 chance
-            transform = doubleSkeletalChange;
-        } else if (rnd < 0.28571 ) { // 1/7 chance
+        if (rnd < 0.166666) {		// 1/6 chance
+            transform = dbnParentSwapChange;
+        } else if (rnd < 0.333333) {// 1/6 chance
+            transform = dbnDoubleArcChange;
+        } else if (rnd < 0.5 ) {	// 1/6 chance
             transform = skeletalChange;
-        } else if (rnd < 0.42857 ){  // 1/7 chance
-            transform = temporalChange;
-        } else if (rnd < 0.71429 ){  // 2/7 chance
+        } else if (rnd < 0.75 ){	// 1/4 chance
         	transform = dbnTemporalArcChange;
-        } else {					 // 2/7 chance
-        	transform = dbnDoubleTemporalArcChange;
+        } else {  					// 1/4 chance
+            transform = temporalChange;
         }
-            
+        
         // was it successful?
         boolean accepted = transform.transform( tom, currentCost );
         
@@ -177,7 +198,7 @@ public class MetropolisSearchDBN extends MetropolisSearch {
             if (temp < 10) {
                 temp = 10;
             }            
-            max = (long)(temp * temp * temp * 200 * 3.0 * caseInfo.searchFactor);	//3x as many arcs -> attempt 3x as many changes...
+            max = (long)(temp * temp * temp * 1000 * caseInfo.searchFactor);
             
             System.out.println( "Sampling " + max + " TOMs" );
             System.out.println( fullData.length() + " data points from " + numNodes + " variables." );
@@ -537,10 +558,9 @@ public class MetropolisSearchDBN extends MetropolisSearch {
 	protected void updateMutationOperators( double arcProb, double arcProbTemporal, double temperature ){
 		skeletalChange = new SkeletalChange( rand, arcProb, caseInfo, temperature );
         temporalChange = new TemporalChange( rand, arcProb, caseInfo, temperature );
-        doubleSkeletalChange = new DoubleSkeletalChange( rand, arcProb, caseInfo, temperature );
-        parentSwapChange = new ParentSwapChange( rand, arcProb, caseInfo, temperature );
         dbnTemporalArcChange = new DBNTemporalArcChange( rand, arcProbTemporal, caseInfo, temperature );
-        dbnDoubleTemporalArcChange = new DBNDoubleTemporalArcChange( rand, arcProbTemporal, caseInfo, temperature );
+        dbnDoubleArcChange = new DBNDoubleArcChange( rand, arcProb, arcProbTemporal, caseInfo, temperature );
+        dbnParentSwapChange = new DBNParentSwapChange( rand, arcProb, arcProbTemporal, caseInfo, temperature );
         
         //As per BNetSearch.updateMutationOperators(...)
         tomCoster.setArcProb( arcProb );								//Intraslice arcs
@@ -560,6 +580,39 @@ public class MetropolisSearchDBN extends MetropolisSearch {
 	 */
 	public void printDetailedCost( TOM tom ){
 		throw new RuntimeException("METHOD NOT IMPLEMENTED");
+	}
+	
+	/** DBN equivalent to MetropolisSearch.getArcPortions().
+	 *  Returns array of arc probabilites for interslice (temporal) arcs, where arc[a][b] is
+	 *  the proportion of time where b_0 -> a_1 exists. */
+	public double[][] getArcPortionsDBN(){
+		double[][] arcWeightsDBN = caseInfo.arcWeightsDBN;
+		int N = arcWeightsDBN.length;
+		double[][] arcProbsDBN = new double[ N ][ N ];
+		
+		
+		for( int i=0; i<N; i++ ){
+			for( int j=0; j<N; j++ ){
+				arcProbsDBN[i][j] = arcWeightsDBN[i][j];
+				if( ((DTOM)tom).isTemporalArc(j, i) ) arcProbsDBN[i][j] += caseInfo.totalWeight;	//Last sampled DTOM
+				arcProbsDBN[i][j] /= caseInfo.totalWeight;
+			}
+		}
+		return arcProbsDBN;
+	}
+	
+	/** Overrides printArcPortions(). Prints both intraslice and interslice arc portions for DBNs. */
+	public void printArcPortions(){
+		System.out.println("\n --- Intraslice arcs ---");
+		super.printArcPortions();
+		System.out.println("\n --- Interslice arcs ---");
+		double[][] pDBN = getArcPortionsDBN();
+		for( int i=0; i< pDBN.length; i++ ){
+			for( int j=0; j < pDBN.length; j++ ){
+				System.out.print(caseInfo.posteriorFormat.format(pDBN[i][j]) + "\t" );
+			}
+			System.out.println();
+		}
 	}
 	
 }

@@ -6,9 +6,7 @@ import camml.core.library.WallaceRandom;
 import camml.core.models.ModelLearner;
 import camml.core.search.AnnealSearch;
 import camml.core.search.CaseInfo;
-import camml.core.search.DoubleSkeletalChange;
 import camml.core.search.NodeCache;
-import camml.core.search.ParentSwapChange;
 import camml.core.search.SECHash;
 import camml.core.search.SkeletalChange;
 import camml.core.search.TOM;
@@ -29,7 +27,9 @@ public class AnnealSearchDBN extends AnnealSearch{
 	/**Additional mutation operators, as per MetropolisSearchDBN.
 	 * Other mutation operators are defined in BNetSearch */
 	protected DBNTemporalArcChange dbnTemporalArcChange;				//Make a single change to a temporal arc in the DBN
-	protected DBNDoubleTemporalArcChange dbnDoubleTemporalArcChange;	//Make two changes to temporal arcs in the DBN
+	protected DBNDoubleArcChange dbnDoubleArcChange;
+	protected DBNParentSwapChange dbnParentSwapChange;
+	
 	
 	/** Prior on temporal arcs being present. Analogous to BNetSearch.arcProb, but for temporal arcs only */
 	protected double arcProbTemporal = 0.5;
@@ -156,18 +156,16 @@ public class AnnealSearchDBN extends AnnealSearch{
 
         // Randomly choose class of transformation to attempt.
         double rnd = rand.nextDouble();
-        if (rnd < 0.07143) {         // 1/14 chance
-            transform = parentSwapChange;
-        } else if (rnd < 0.14286) {  // 1/14 chance
-            transform = doubleSkeletalChange;
-        } else if (rnd < 0.28571 ) { // 1/7 chance
+        if (rnd < 0.166666) {		// 1/6 chance
+            transform = dbnParentSwapChange;
+        } else if (rnd < 0.333333) {// 1/6 chance
+            transform = dbnDoubleArcChange;
+        } else if (rnd < 0.5 ) {	// 1/6 chance
             transform = skeletalChange;
-        } else if (rnd < 0.42857 ){  // 1/7 chance
-            transform = temporalChange;
-        } else if (rnd < 0.71429 ){  // 2/7 chance
+        } else if (rnd < 0.75 ){	// 1/4 chance
         	transform = dbnTemporalArcChange;
-        } else {					 // 2/7 chance
-        	transform = dbnDoubleTemporalArcChange;
+        } else {  					// 1/4 chance
+            transform = temporalChange;
         }
         
         // was it successful?
@@ -250,7 +248,7 @@ public class AnnealSearchDBN extends AnnealSearch{
 	 */
 	public double doEpoch(){
 		double sfOld = caseInfo.searchFactor;
-		caseInfo.searchFactor *= 3.0;		//Originally: ~0.5N^2 arcs; now: ~1.5N^2 arcs - i.e. 3x as many arcs to learn
+		caseInfo.searchFactor *= 5.0;		//Run 5x as many iterations (vs. non-DBN CaMML) to account for temporal arcs - same as MetropolisSearchDBN 
 		double result = super.doEpoch();	//Call AnnealSearch.doEpoch()
 		caseInfo.searchFactor = sfOld;		//Restore
 		return result;
@@ -281,10 +279,9 @@ public class AnnealSearchDBN extends AnnealSearch{
 	protected void updateMutationOperators( double arcProb, double arcProbTemporal, double temperature ){
 		skeletalChange = new SkeletalChange( rand, arcProb, caseInfo, temperature );
         temporalChange = new TemporalChange( rand, arcProb, caseInfo, temperature );
-        doubleSkeletalChange = new DoubleSkeletalChange( rand, arcProb, caseInfo, temperature );
-        parentSwapChange = new ParentSwapChange( rand, arcProb, caseInfo, temperature );
         dbnTemporalArcChange = new DBNTemporalArcChange( rand, arcProbTemporal, caseInfo, temperature );
-        dbnDoubleTemporalArcChange = new DBNDoubleTemporalArcChange( rand, arcProbTemporal, caseInfo, temperature );
+        dbnDoubleArcChange = new DBNDoubleArcChange( rand, arcProb, arcProbTemporal, caseInfo, temperature );
+        dbnParentSwapChange = new DBNParentSwapChange( rand, arcProb, arcProbTemporal, caseInfo, temperature );
         
         //As per BNetSearch.updateMutationOperators(...)
         tomCoster.setArcProb( arcProb );								//Intraslice arcs

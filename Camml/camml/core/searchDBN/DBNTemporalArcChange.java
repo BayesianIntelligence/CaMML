@@ -6,7 +6,7 @@ import camml.core.search.CaseInfo;
 import camml.core.search.TOM;
 import camml.core.search.TOMTransformation;
 
-/**Attempts a change to one temporal arc in DTOM (addition or removal).
+/**Attempts a change to one interslice (temporal) arc in DTOM (addition or removal).
  * Analogous to SkeletalChange but for DBN interslice arcs.
  */
 public class DBNTemporalArcChange extends TOMTransformation {
@@ -78,7 +78,15 @@ public class DBNTemporalArcChange extends TOMTransformation {
         
         
         if( accept() ){
-        	//TODO: Add code for tracking of arc weights, as in SkeletalChange etc...
+        	//Tracking of arc weights for DBNs, as per SkeletalChange
+        	if( caseInfo.updateArcWeights ){
+	        	if( dtom.isTemporalArc(parent, child) ){
+	        		caseInfo.arcWeightsDBN[child][parent] -= caseInfo.totalWeight;
+	        	} else {
+	        		caseInfo.arcWeightsDBN[child][parent] += caseInfo.totalWeight;
+	        	}
+        	}
+        	
         	return true;
         } else{	//Undo change:
         	if( dtom.isTemporalArc(parent, child)) {
