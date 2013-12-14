@@ -1214,6 +1214,8 @@ public class CaMMLGUI extends javax.swing.JFrame {
     		new BNetViewer( networkString, false, windowTitle );
         } catch( Exception e ){
         	JOptionPane.showMessageDialog( mainTabbedPane, e );
+        } catch( NoClassDefFoundError | UnsatisfiedLinkError e ){
+        	JOptionPane.showMessageDialog( mainTabbedPane, "Error: Netica libraries not found. Cannot view network." );
         }
     }
     

@@ -116,8 +116,8 @@ public class GUIModel implements GUIParameters {
 		
 	}
 	
-	public void exportFullResultsBN( String filepath, int index ) {
-		exportFullResultsBN(filepath, index);
+	public void exportFullResultsBN( String filepath, int index ) throws Exception {
+		exportFullResultsBN(filepath, index, false);
 	}
 	
 	/**Exports ALL networks (Netica format) from the set of 'representative networks'
@@ -136,7 +136,7 @@ public class GUIModel implements GUIParameters {
 		else numBNs = searchResultsDBN.length;
 		
 		for( int i = 0; i < numBNs; i++ ){
-			exportFullResultsBN( filepath, i );
+			exportFullResultsBN( filepath, i, true );
 		}
 	}
 	
