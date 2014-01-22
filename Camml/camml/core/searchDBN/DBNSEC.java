@@ -35,8 +35,7 @@ public class DBNSEC extends SEC {
 		
 		//Extract temporal edges from DTOM:
 		DTOM dtom = (DTOM)cleanTom;
-		int numEdges = dtom.getNumEdges() + dtom.getNumTemporalEdges();	//Intraslice edges + temporal edges
-		edgeListTemporal = new int[2][numEdges];
+		edgeListTemporal = new int[2][dtom.getNumTemporalEdges()];
 		
 		int numNodes = dtom.getNumNodes();
 		
