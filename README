@@ -1,7 +1,7 @@
-Quick guide to getting CaMML started (updated 17-02-2013) :
+Quick guide to getting CaMML started (updated 2015-08-06) :
 
 for the latest src see:
-    https://github.com/AlexDBlack/CaMML
+    https://github.com/BayesianIntelligence/CaMML
 for docs & discussion see:
     http://groups.google.com/group/camml/
     
@@ -30,16 +30,13 @@ on Netica libraries), and support for learning DBNs.
 At present, this GUI only supports data files that are discrete and contain no
 missing values.
 
-== CaMML command line (and Weka Wrapper) ==
-
-CaMML can be used from the command line, by default as a standard weka classifier.
-It can also be added to the weka GUI, but that's beyond the scope of this doc.
+== CaMML command line ==
 
 - To get a list of options, go to the BI-CaMML directory and use:
   > camml.sh
   > camml.bat (Windows)
 
 - To train/test a model using weka's default x-fold validation, use:
-  > camml.sh -t Camml/camml/test/iris.arff
-  > camml.bat -t Camml/camml/test/iris.arff (Windows)
+  > camml.sh Camml/camml/test/iris.arff output.dne
+  > camml.bat Camml/camml/test/iris.arff output.dne (Windows)
 
