@@ -22,6 +22,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import camml.core.search.MetropolisSearch;
 import camml.core.searchDBN.MetropolisSearchDBN;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 /**Main class for GUI.
@@ -202,7 +210,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
         });
 
         setupLabelMinTotalPosterior.setText("Minimum Total Posterior");
-        setupLabelMinTotalPosterior.setToolTipText("<html>Minimal total SEC posterior to retain from Metropolis Sampling.<br>\nNote: This value is ignored if more than the specified 'Maximum Number<br>\nof SECs' is required.</html>");
+        setupLabelMinTotalPosterior.setToolTipText("<html>Minimal total SEC posterior to retain from Metropolis Sampling.<br>\r\nNote: This value is ignored if more than the specified 'Maximum Number<br>\r\nof SECs' is required.</html>");
 
         setupLabelMaxSECs.setText("Maximum Number of SECs");
         setupLabelMaxSECs.setToolTipText("<html>Maximum number of SECs to retain post-Metropolis sampling.<br>\nNote: Making this number larger slows down the process of combining<br>\nmodels after running search (i.e time taken to generate full results).</html>");
@@ -265,95 +273,126 @@ public class CaMMLGUI extends javax.swing.JFrame {
                 setupRNGSeed2FocusLost(evt);
             }
         });
+        
+        JLabel lblPriorArcProbability = new JLabel("Fixed Prior Arc Probability (blank = auto)");
+        lblPriorArcProbability.setToolTipText("<html>The probability of an arc appearing between any two nodes, prior<br>\r\nto any data. This is a global setting that can be overridden on an arc-by-arc<br>\r\nbasis under the 'Expert Priors' tab.</html>");
+        lblPriorArcProbability.setHorizontalAlignment(SwingConstants.LEFT);
+        
+        priorArcProbField = new JTextField();
+        priorArcProbField.addFocusListener(new FocusAdapter() {
+        	@Override
+        	public void focusLost(FocusEvent evt) {
+        		setupArcProbFocusLost(evt);
+        	}
+        });
+        priorArcProbField.setHorizontalAlignment(SwingConstants.RIGHT);
+        priorArcProbField.setText("");
+        priorArcProbField.setColumns(10);
 
         javax.swing.GroupLayout searchParametersPanelLayout = new javax.swing.GroupLayout(searchParametersPanel);
-        searchParametersPanel.setLayout(searchParametersPanelLayout);
         searchParametersPanelLayout.setHorizontalGroup(
-            searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator3)
-            .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                        .addComponent(setupLabelParameterizationSettings)
-                        .addContainerGap())
-                    .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(setupLabelMMLLearner, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(setupLabelSearchSettings)
-                            .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(setupLabelRNG, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(setupLabelRNGSeed, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                                .addComponent(setupLabelSearchFactor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(setupLabelMaxSECs, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(setupLabelMinTotalPosterior, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(setupLabelAdvancedSettings)
-                            .addComponent(setupLabelLearnDBN, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                                .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(setupLearnDBNCheckbox)
-                                    .addComponent(maxSECsTextfield)
-                                    .addComponent(searchFactorTextfield)
-                                    .addComponent(minTotalPosteriorTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                                .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, searchParametersPanelLayout.createSequentialGroup()
-                                        .addComponent(setupRNGSeed, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(setupRNGSeed2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(setupRNGCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(MMLLearnerCombo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(45, Short.MAX_VALUE))))))
-            .addComponent(jSeparator4)
+        	searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(jSeparator3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        					.addContainerGap()
+        					.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(setupLabelParameterizationSettings)
+        						.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        							.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        								.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        									.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        										.addComponent(setupLabelMMLLearner, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)
+        										.addComponent(setupLabelSearchSettings)
+        										.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.TRAILING, false)
+        											.addComponent(setupLabelRNG, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        											.addComponent(setupLabelRNGSeed, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+        											.addComponent(setupLabelSearchFactor, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        											.addComponent(setupLabelMaxSECs, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        										.addComponent(setupLabelAdvancedSettings))
+        									.addGap(12))
+        								.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        									.addComponent(setupLabelMinTotalPosterior, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        									.addPreferredGap(ComponentPlacement.RELATED)))
+        							.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        								.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING, false)
+        									.addComponent(maxSECsTextfield)
+        									.addComponent(searchFactorTextfield)
+        									.addComponent(minTotalPosteriorTextField, GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+        									.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        										.addComponent(setupLearnDBNCheckbox)
+        										.addPreferredGap(ComponentPlacement.RELATED))
+        									.addComponent(priorArcProbField))
+        								.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.LEADING, false)
+        									.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        										.addComponent(setupRNGSeed, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
+        										.addPreferredGap(ComponentPlacement.RELATED)
+        										.addComponent(setupRNGSeed2, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
+        									.addComponent(setupRNGCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        									.addComponent(MMLLearnerCombo, GroupLayout.PREFERRED_SIZE, 266, GroupLayout.PREFERRED_SIZE))))))
+        				.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        					.addComponent(jSeparator4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(lblPriorArcProbability))
+        				.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        					.addContainerGap()
+        					.addComponent(setupLabelLearnDBN, GroupLayout.PREFERRED_SIZE, 211, GroupLayout.PREFERRED_SIZE)))
+        			.addContainerGap(50, Short.MAX_VALUE))
         );
         searchParametersPanelLayout.setVerticalGroup(
-            searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(setupLabelParameterizationSettings)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(setupLabelMMLLearner)
-                    .addComponent(MMLLearnerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(searchParametersPanelLayout.createSequentialGroup()
-                        .addComponent(setupLabelSearchSettings)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(setupLabelRNG)
-                            .addComponent(setupRNGCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(setupLabelRNGSeed)
-                            .addComponent(setupRNGSeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(setupRNGSeed2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(setupLabelSearchFactor)
-                            .addComponent(searchFactorTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(setupLabelMaxSECs)
-                            .addComponent(maxSECsTextfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(searchParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(setupLabelMinTotalPosterior)
-                            .addComponent(minTotalPosteriorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(setupLabelAdvancedSettings)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(setupLabelLearnDBN))
-                    .addComponent(setupLearnDBNCheckbox))
-                .addContainerGap(74, Short.MAX_VALUE))
+        	searchParametersPanelLayout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        			.addContainerGap()
+        			.addComponent(setupLabelParameterizationSettings)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(setupLabelMMLLearner)
+        				.addComponent(MMLLearnerCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(jSeparator3, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addComponent(setupLabelSearchSettings)
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(setupLabelRNG)
+        				.addComponent(setupRNGCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(setupLabelRNGSeed)
+        				.addComponent(setupRNGSeed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(setupRNGSeed2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(setupLabelSearchFactor)
+        				.addComponent(searchFactorTextfield, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(setupLabelMaxSECs)
+        				.addComponent(maxSECsTextfield, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(minTotalPosteriorTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(setupLabelMinTotalPosterior))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.TRAILING)
+        				.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        					.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.TRAILING)
+        						.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        							.addComponent(jSeparator4, GroupLayout.PREFERRED_SIZE, 10, GroupLayout.PREFERRED_SIZE)
+        							.addGap(28))
+        						.addGroup(searchParametersPanelLayout.createSequentialGroup()
+        							.addGroup(searchParametersPanelLayout.createParallelGroup(Alignment.BASELINE)
+        								.addComponent(lblPriorArcProbability)
+        								.addComponent(priorArcProbField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+        							.addGap(18)))
+        					.addComponent(setupLabelAdvancedSettings)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(setupLabelLearnDBN))
+        				.addComponent(setupLearnDBNCheckbox))
+        			.addContainerGap(52, Short.MAX_VALUE))
         );
+        searchParametersPanel.setLayout(searchParametersPanelLayout);
 
         setupLabelLearnDBN.getAccessibleContext().setAccessibleName("Learn DBN");
 
@@ -882,6 +921,24 @@ public class CaMMLGUI extends javax.swing.JFrame {
     	}
     }
     
+    private void setupArcProbFocusLost(java.awt.event.FocusEvent evt) {
+    	String s = priorArcProbField.getText();
+    	
+    	if ( validateNumericInputStringDouble( s, 0, 1 ) || s.equals("") ) {
+    		priorArcProbField.setBackground( Color.WHITE );
+    		if (s.equals("")) {
+    			guimodel.arcProb = Double.NaN;
+    		}
+    		else {
+    			guimodel.arcProb = Double.parseDouble(s);
+    		}
+    	}
+    	else {
+    		priorArcProbField.setBackground( Color.RED );
+    		guimodel.arcProb = Double.NaN;
+    	}
+    }
+    
     /**User checks the "Learn DBN" checkbox (on setup tab) */
     private void setupLearnDBNCheckboxActionPerformed(java.awt.event.ActionEvent evt) {
         //First: Find if checked or unchecked...
@@ -891,6 +948,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     		setExpertPriorsTabEnabled( false );
     		useExpertPriorsCheckbox.setSelected( false );
     		useExpertPriorsCheckbox.setEnabled( false );
+    		priorArcProbField.setEnabled( false );
     		guimodel.useExpertPriors = false;
     		expertPriorsTextArea.setText("Expert Priors: Not supported when learning DBNs");
     	} else {
@@ -898,6 +956,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     		setExpertPriorsTabEnabled( false );
     		useExpertPriorsCheckbox.setSelected( false );
     		useExpertPriorsCheckbox.setEnabled( true );
+    		priorArcProbField.setEnabled( true );
     		guimodel.useExpertPriors = false;
     		expertPriorsTextArea.setText("");
     	}
@@ -1389,6 +1448,11 @@ public class CaMMLGUI extends javax.swing.JFrame {
     		return false;
     	}
     	
+    	if ( !guimodel.arcProbValid() ){
+    		JOptionPane.showMessageDialog(mainTabbedPane, "Arc prior probability invalid.","Error",JOptionPane.ERROR_MESSAGE);
+    		return false;
+    	}
+    	
     	return true;
     }
     
@@ -1564,6 +1628,7 @@ public class CaMMLGUI extends javax.swing.JFrame {
     
     //Separate Thread for running search in:
     Thread searchThread = null;			//Thread for running the search
+    private JTextField priorArcProbField;
 }
 
 

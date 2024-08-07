@@ -19,7 +19,7 @@ public interface GUIParameters {
 	
 	//TODO: Version number 
 	public String programName = "BI-CaMML";
-	public String versionNumber = "1.1";
+	public String versionNumber = "1.4.2";
 	
 	//Formatting options for results table
 	public static final DecimalFormat formatPosterior = new DecimalFormat("0.00000");		//Posteriors to 5 DP

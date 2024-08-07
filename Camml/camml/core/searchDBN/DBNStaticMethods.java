@@ -97,7 +97,7 @@ public class DBNStaticMethods {
     	Value.Vector origData = dtom.caseInfo.data;
     	Type.Structured inputTypes = (Type.Structured)((Type.Vector)origData.t).elt;	//Type info for generated data is same as original data
     	
-    		//Store the assignments in an integer array:
+    	//Store the assignments in an integer array:
     	int[][] newData = new int[numNodes][n];
     	
     	//Get the parameters for each node (parameters for first time slice, and second time slice)
@@ -123,8 +123,15 @@ public class DBNStaticMethods {
 	    final Type.Structured datatype = (Type.Structured)((Type.Vector)(dtom.caseInfo.data).t).elt;
 		int[] arity = new int[ numNodes ];
 		for( int i=0; i<numNodes; i++ ){
-			Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];
-            arity[i] = NeticaFn.makeValidNeticaNames(sType.ids,true).length;
+			Type genericType = datatype.cmpnts[i];
+			if (genericType.getTypeName().equals("Discrete")) {
+				Type.Discrete sType = (Type.Discrete)datatype.cmpnts[i];
+				arity[i] = (int)(sType.UPB - sType.LWB) + 1;
+			}
+			else {
+				Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];
+	            arity[i] = NeticaFn.makeValidNeticaNames(sType.ids,true).length;
+			}
 		}
     	
     	//Generate a set of assignments for the FIRST time slice
@@ -244,7 +251,7 @@ public class DBNStaticMethods {
     	//Now, combine type and value (i.e. assignments) together for each variable:
     	Value.Vector[] vecArray = new Value.Vector[numNodes];
     	for( int i=0; i<numNodes; i++ ){
-    		vecArray[i] = new VectorFN.FastDiscreteVector( newData[i], (Type.Symbolic)inputTypes.cmpnts[i] );
+    		vecArray[i] = new VectorFN.FastDiscreteVector( newData[i], (Type.Discrete)inputTypes.cmpnts[i] );
     	}
     	//And create the overall data structure:
     	Value.Structured vecStruct = new Value.DefStructured(vecArray,name);

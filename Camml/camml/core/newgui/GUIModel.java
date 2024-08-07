@@ -47,6 +47,7 @@ public class GUIModel implements GUIParameters {
 	protected double searchFactor = 1.0;
 	protected int maxSECs = 30;
 	protected double minTotalPosterior = 0.999;
+	protected double arcProb = Double.NaN;
 	
 	protected File selectedFile = null;			//Used mainly for path - for file dialog boxes etc
 	protected File lastExportedBNet = null;
@@ -292,6 +293,10 @@ public class GUIModel implements GUIParameters {
 	public boolean minTotalPosteriorValid(){
 		return ( minTotalPosterior >= GUIParameters.min_minTotalPosterior && minTotalPosterior <= GUIParameters.max_minTotalPosterior );
 	}
+
+	public boolean arcProbValid() {
+		return Double.isNaN(arcProb) || arcProb>=0 && arcProb<=1;
+	}
 	
 	/**Method that actually runs the full Metropolis Search.
 	 * Does not check if data/parameters are valid: assumes these checks
@@ -325,6 +330,12 @@ public class GUIModel implements GUIParameters {
 		metropolisSearch.caseInfo.searchFactor = searchFactor;				//No separate value kept in MetropolisSearch
 		metropolisSearch.caseInfo.maxNumSECs = maxSECs;						//No separate value kept in MetropolisSearch
 		metropolisSearch.caseInfo.minTotalPosterior = minTotalPosterior;	//No separate value kept in MetropolisSearch
+		if (!learnDBN){
+			if (!Double.isNaN(arcProb)) {
+				metropolisSearch.caseInfo.arcProb = arcProb;
+				metropolisSearch.setOption("arcProb", new Value.Continuous(arcProb)); //metropolisSearch also has it's own copy of arcProb
+			}
+		}
 		try {
 			/// Test for Netica at run time
 			Class.forName("norsys.netica.Environ");
@@ -336,22 +347,18 @@ public class GUIModel implements GUIParameters {
 		
 		
 		//Display whether using set RNG seed or random, plus what the seed is:
-		System.out.print("RNG = " + r );
-		if( useSetSeed ){
-			if( r.getClass() == Random.class ){	//Java random
-				System.out.println("; Set seed = " + randomSeed );
-				r.setSeed(randomSeed);
-			} else if( r.getClass() == WallaceRandom.class ){
-				System.out.println("; Set seeds = " + randomSeed + " & " + randomSeed2 );
-				((WallaceRandom)r).setSeed( new int[]{ randomSeed, randomSeed2 } );
-			}
-		} else{
-			System.out.println("; Random seed");
+		System.out.print("RNG = ");
+		if (r.getClass() == WallaceRandom.class) {
+			System.out.println("Wallace. Seeds: "+randomSeed + " & " + randomSeed2);
+		}
+		else {
+			System.out.println("Java. Seed: "+randomSeed);
 		}
 		
 		//Run the MetropolisSearch algorithm until finished:
 		int count = 0;
 		while( !metropolisSearch.isFinished() ){
+			//ystem.out.println("Iteration "+count+": "+metropolisSearch.caseInfo.arcProb);
 			metropolisSearch.doEpoch();
 			count++;
 		}

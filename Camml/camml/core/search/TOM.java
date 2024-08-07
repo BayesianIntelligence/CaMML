@@ -56,7 +56,7 @@ import cdms.core.VectorFN;
 public class TOM implements Cloneable
 {
     /** Maximum number of parents a node is allowed. */
-    protected int maxNumParents = 7;
+    protected int maxNumParents = 11;
     public int getMaxNumParents() { return maxNumParents; }
     public void setMaxNumParents( int maxNumParents ) { this.maxNumParents = maxNumParents; }
     

@@ -73,8 +73,15 @@ public class ExportDBNNetica {
 		//Determine the arity of each node:
 		int[] arity = new int[ numNodes ];
 		for( int i=0; i<numNodes; i++ ){
-			Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];
-            arity[i] = NeticaFn.makeValidNeticaNames(sType.ids,true).length;
+			Type genericType = datatype.cmpnts[i];
+			if (genericType.getTypeName().equals("Discrete")) {
+				Type.Discrete sType = (Type.Discrete)datatype.cmpnts[i];
+				arity[i] = (int)(sType.UPB - sType.LWB) + 1;
+			}
+			else {
+				Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];
+	            arity[i] = NeticaFn.makeValidNeticaNames(sType.ids,true).length;
+			}
 		}
 		
 		//Calculate the parameters for each node:
@@ -103,6 +110,15 @@ public class ExportDBNNetica {
             if (datatype.cmpnts[i] instanceof Type.Symbolic) {
                 Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];                
                 String str = Arrays.toString(NeticaFn.makeValidNeticaNames(sType.ids,true));                
+                s.append( "\tstates = (" + str.subSequence(1,str.length()-1) + ");\n" );
+            }
+            else if (datatype.cmpnts[i] instanceof Type.Discrete) {
+                Type.Discrete sType = (Type.Discrete)datatype.cmpnts[i];
+                String[] stateNumbers = new String[arity[i]];
+                for (int j=0; j<arity[i]; j++) {
+                	stateNumbers[j + (int)sType.LWB] = ""+j; 
+                }
+                String str = Arrays.toString(NeticaFn.makeValidNeticaNames(stateNumbers,true));                
                 s.append( "\tstates = (" + str.subSequence(1,str.length()-1) + ");\n" );
             }
             
@@ -198,6 +214,15 @@ public class ExportDBNNetica {
             if (datatype.cmpnts[i] instanceof Type.Symbolic) {
                 Type.Symbolic sType = (Type.Symbolic)datatype.cmpnts[i];                
                 String str = Arrays.toString(NeticaFn.makeValidNeticaNames(sType.ids,true));                
+                s.append( "\tstates = (" + str.subSequence(1,str.length()-1) + ");\n" );
+            }
+            else if (datatype.cmpnts[i] instanceof Type.Discrete) {
+                Type.Discrete sType = (Type.Discrete)datatype.cmpnts[i];
+                String[] stateNumbers = new String[arity[i]];
+                for (int j=0; j<arity[i]; j++) {
+                	stateNumbers[j + (int)sType.LWB] = ""+j; 
+                }
+                String str = Arrays.toString(NeticaFn.makeValidNeticaNames(stateNumbers,true));                
                 s.append( "\tstates = (" + str.subSequence(1,str.length()-1) + ");\n" );
             }
             

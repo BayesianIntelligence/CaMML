@@ -2,6 +2,8 @@ package camml.core.newgui;
 
 import java.util.*;
 
+import camml.core.library.WallaceRandom;
+
 import com.beust.jcommander.*;
 import java.io.*;
 
@@ -9,16 +11,16 @@ import java.io.*;
 class CmdOptions {
 	@Parameter(description = "<data-file> [<output-file>]")
 	public List<String> files = new ArrayList<String>();
-	
+
 	@Parameter(names = {"-a", "--all-bns"}, description = "Output all representative networks retained. Without this, only one representative network is saved.")
 	public boolean allBNs = false;
-	
+
 	@Parameter(names = {"-p", "--priors"}, description = "File containing the expert priors.")
 	public String priorsFn = null;
-	
+
 	@Parameter(names = {"-P", "--priors-string"}, description = "Expert priors as a string.")
 	public String priorsString = null;
-	
+
 	@Parameter(names = {"-q", "--quiet"}, description = "Only output the BN and errors; don't output status information.")
 	public boolean quiet = false;
 
@@ -30,9 +32,18 @@ class CmdOptions {
 
 	@Parameter(names = "--dbn", description = "Learn a DBN network from the data (assumes data is in time series format with Row 1 = t, Row 2 = t+1, etc.)")
 	public boolean dbn = false;
-	
+
 	@Parameter(names = "--make-priors", description = "Save a default priors file template to the file name given.")
 	public String makePriors = null;
+
+	@Parameter(names = "--rand-seed", description = "Set the random seed to use (for the Java random number generator).")
+	public int randSeed = 0;
+
+	@Parameter(names = "--wallace-rand-seeds", description = "Set the random seeds to use (for the Wallace random number generator - requires two integers, separated by a comma and no spaces. e.g. 2983749,-349879).")
+	public String wallaceRandSeeds = null;
+
+	@Parameter(names = "--arc-prob", description = "Set the prior probability for arcs in the networks (default auto sets from annealing search).")
+	public double arcProb = Double.NaN;
 }
 
 public class RunCmd {
@@ -40,38 +51,37 @@ public class RunCmd {
 		PrintStream psOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 		System.setOut(psOut);
 	}
-	
+
     public static void quietOutputStream(){
     	//Anonymous inner class for redirecting output stream to the specified text area:
     	OutputStream quietOut = new OutputStream(){
     		@Override
     	    public void write(int b) throws IOException {
     	    }
-    	 
+
     	    @Override
     	    public void write(byte[] b, int off, int len) throws IOException {
     	    }
-    	 
+
     	    @Override
     	    public void write(byte[] b) throws IOException {
     	    }
     	};
-    	
+
     	PrintStream PSOut = new PrintStream( quietOut, true );
     	System.setOut( PSOut );
     }
-    
+
     public static void makePriorsFile(String path) throws Exception {
 		File newPriorsFile = new File(path);
 		FileWriter fw = new FileWriter(newPriorsFile);
-		
+
 		fw.write(GUIParameters.defaultNewExpertPriorString);
-		
+
 		fw.close();
     }
 
     public static void main(String[] args) throws Exception {
-    	System.out.println("yo!");
     	//quietOutputStream();
 		CmdOptions opts = new CmdOptions();
 		JCommander j = new JCommander(opts);
@@ -79,62 +89,78 @@ public class RunCmd {
 		try {
 			final GUIModel model = new GUIModel();
 			normalOutputStream();
-			
+
 			//args = new String[]{"example-data/AsiaCases.1000.csv","testout.dne"};
 			j.parse(args);
-			System.out.println(args);
-			
+			//ystem.out.println(args);
+
 			if (opts.makePriors != null) {
 				makePriorsFile(opts.makePriors);
 				return;
 			}
-			
+
 			if (opts.quiet) {
 				quietOutputStream();
 			}
 			else {
 				normalOutputStream();
 			}
-			
+
 			if (opts.files.size() == 0) {
 				j.usage();
 				return;
 			}
 			String inFile = opts.files.get(0);
-			
+
 			model.selectedFile = new File(inFile);
 			model.loadDataFile(inFile);
 			model.MMLLearner = GUIModel.MMLLearners[0];
-			
+
 			if (opts.priorsFn != null) {
 				Scanner tmps = new Scanner(new File(opts.priorsFn));
 				opts.priorsString = tmps.useDelimiter("\\Z").next();
 				tmps.close();
 			}
-			
+
 			if (opts.priorsString != null) {
 				model.useExpertPriors = true;
 				model.expertPriorsString = opts.priorsString;
 				System.out.println("Using priors: "+model.expertPriorsString);
 			}
-			
+
 			model.searchFactor = opts.speed;
 			model.maxSECs = opts.maxSECs;
-			
+			model.arcProb = opts.arcProb;
+			if (opts.randSeed != 0) {
+				model.randomSeed = opts.randSeed;
+				model.r = new Random(opts.randSeed);
+			}
+			if (opts.wallaceRandSeeds != null) {
+				String[] seeds = opts.wallaceRandSeeds.split(",");
+				if (seeds.length != 2)  throw new Exception("Need 2 integers (separated by comma) for Wallace random seed.");
+				model.randomSeed = Integer.parseInt(seeds[0]);
+				model.randomSeed2 = Integer.parseInt(seeds[1]);
+				model.r = new WallaceRandom();
+				((WallaceRandom)model.r).setSeed(new int[]{model.randomSeed, model.randomSeed2});
+			}
+
 	    	if( !model.dataValid() )  throw new Exception("Invalid data");
-	    	
+
 	    	//Check MMLLearner:
 	    	if( !model.MMLLearnerValid() )  throw new Exception("Invalid MML learner");
-	    	
+
 	    	//Check Search factor value:
 	    	if( !model.searchFactorValid() )  throw new Exception("Invalid search factor");
-	    	
+
 	    	//Check max SECs value:
 	    	if( !model.maxSECsValid() )  throw new Exception("Invalid max SECs");
-	    	
+
 	    	//Check max SECs value:
 	    	if( !model.minTotalPosteriorValid() )  throw new Exception("Invalid minimum total posterior");
-	    	
+
+	    	//Check max SECs value:
+	    	if( !model.arcProbValid() )  throw new Exception("Invalid arc prior probability");
+
 	    	//Check expert priors value:
 	    	if( !model.expertPriorsValid() ) {
 		    	try {
@@ -144,9 +170,9 @@ public class RunCmd {
 		    		throw new Exception("Invalid expert priors: "+e);
 		    	}
 	    	}
-	    	
+
 			model.runSearch(opts.dbn);
-			
+
 			if (opts.files.size() >= 2) {
 				String outFile = opts.files.get(1);
 				if (opts.allBNs) {
@@ -161,7 +187,7 @@ public class RunCmd {
 			else {
 				System.out.println("\n\nDisplaying Representative Network");
 				System.out.println(    "---------------------------------");
-				
+
 				/// If not output file specified, print to console
 				normalOutputStream();
 				System.out.println(model.generateNetworkStringFullResults(0));
