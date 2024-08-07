@@ -37,6 +37,7 @@
 package camml.core.models;
 
 import cdms.core.*;
+import cdms.core.Module;
 import camml.core.models.bNet.*;
 import camml.core.models.cpt.*;
 import camml.core.models.dTree.*;

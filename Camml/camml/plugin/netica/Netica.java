@@ -37,6 +37,7 @@
 package camml.plugin.netica;
 
 import cdms.core.*;
+import cdms.core.Module;
 import norsys.netica.*;
 
 /**

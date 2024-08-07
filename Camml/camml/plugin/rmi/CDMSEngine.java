@@ -45,6 +45,7 @@ import java.io.*;
 import java.util.ArrayList;
 
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
  * RMI Interface to CDMS.

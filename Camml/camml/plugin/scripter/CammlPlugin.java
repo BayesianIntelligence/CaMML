@@ -48,6 +48,7 @@ import java.io.*;
 
 import camml.plugin.rodoCamml.RodoCammlIO;
 import cdms.core.*;
+import cdms.core.Module;
 import cdms.plugin.fpli.*;
 
 /** The Camml scriptiong function Module.  */

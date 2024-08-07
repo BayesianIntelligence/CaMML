@@ -47,6 +47,7 @@ import java.util.Map.Entry;
 import camml.core.library.StructureFN.FastDiscreteStructure;
 import camml.core.models.ModelLearner;
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
  * Library contains a group of useful functions.  Some of these could be incorporated into 

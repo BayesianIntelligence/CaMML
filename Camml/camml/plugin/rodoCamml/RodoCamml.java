@@ -37,6 +37,7 @@
 package camml.plugin.rodoCamml;
 
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
  * Module to interface with the "rodo" version of camml. (this mainly exists for regression testing

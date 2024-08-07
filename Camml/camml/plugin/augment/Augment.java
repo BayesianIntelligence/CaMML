@@ -37,6 +37,7 @@
 package camml.plugin.augment;
 
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
    Module to load Augment functions

@@ -37,6 +37,7 @@
 package camml.core.search;
 
 import cdms.core.*;
+import cdms.core.Module;
 import camml.core.models.ModelLearner;
 
 import camml.core.models.bNet.BNetLearner;

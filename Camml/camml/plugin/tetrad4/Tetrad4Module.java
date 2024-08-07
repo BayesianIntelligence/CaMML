@@ -37,6 +37,7 @@
 package camml.plugin.tetrad4;
 
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
  * Module to interface with Tetrad IV functions.  <br>

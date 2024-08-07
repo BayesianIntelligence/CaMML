@@ -37,6 +37,7 @@
 package camml.plugin.weka;
 
 import cdms.core.*;
+import cdms.core.Module;
 import weka.core.*;
 import weka.filters.supervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;

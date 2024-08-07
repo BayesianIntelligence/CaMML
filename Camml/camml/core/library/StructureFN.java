@@ -39,6 +39,7 @@ package camml.core.library;
 import java.util.Arrays;
 
 import cdms.core.*;
+import cdms.core.Module;
 
 /**
    StructureFN contains useful functions pertaining to structures, and useful implementations of

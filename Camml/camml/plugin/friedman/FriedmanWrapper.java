@@ -37,7 +37,7 @@
 package camml.plugin.friedman;
 
 import cdms.core.*;
-
+import cdms.core.Module;
 import camml.core.models.bNet.*;
 import camml.core.models.cpt.CPT;
 import camml.core.models.FunctionStruct;
